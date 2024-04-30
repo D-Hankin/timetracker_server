@@ -20,7 +20,6 @@ public class UserResource {
     UserService userService;
 
     @GET
-    @Path("/")
     public Response test() {
         return Response.ok("Server working").build();
     }
