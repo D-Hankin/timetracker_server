@@ -11,6 +11,7 @@ com.google.errorprone:error_prone_annotations::jar:2.25.0
 com.ibm.async:asyncutil::jar:0.1.0
 com.sun.istack:istack-commons-runtime::jar:4.1.2
 commons-io:commons-io::jar:2.15.1
+dnsjava:dnsjava::jar:3.5.3
 io.agroal:agroal-api::jar:2.3
 io.agroal:agroal-narayana::jar:2.3
 io.agroal:agroal-pool::jar:2.3
@@ -171,10 +172,11 @@ org.jboss.threads:jboss-threads::jar:3.6.1.Final
 org.jboss:jboss-transaction-spi::jar:8.0.0.Final
 org.mongodb:bson-record-codec::jar:4.11.1
 org.mongodb:bson::jar:4.11.1
+org.mongodb:mongo-java-driver::jar:3.12.14
 org.mongodb:mongodb-crypt::jar:1.8.0
 org.mongodb:mongodb-driver-core::jar:4.11.1
 org.mongodb:mongodb-driver-reactivestreams::jar:4.11.1
-org.mongodb:mongodb-driver-sync::jar:4.11.1
+org.mongodb:mongodb-driver-sync::jar:5.0.1
 org.postgresql:postgresql::jar:42.7.3
 org.reactivestreams:reactive-streams::jar:1.0.4
 org.slf4j:slf4j-api::jar:2.0.6
