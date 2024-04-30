@@ -18,6 +18,12 @@ public class UserResource {
 
     @Inject
     UserService userService;
+
+    @GET
+    @Path("/")
+    public Response test() {
+        return Response.ok("Server working").build();
+    }
     
     @GET
     @Path("/user")
