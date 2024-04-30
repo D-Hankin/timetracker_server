@@ -23,7 +23,7 @@ public class UserResource {
     @Path("/user")
     public Response findUser(@HeaderParam("username") String username) {
         System.out.println("here i am");
-        return userService.findUser("dhankin86");
+        return userService.findUser(username);
     }
 
 }
