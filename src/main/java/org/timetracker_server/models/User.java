@@ -1,15 +1,12 @@
 package org.timetracker_server.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
 
-@Entity(name = "users")
 public class User {
     
-    @Id
-    @Column(unique = true)
-    private String userId;
+    @BsonId
+    private ObjectId userId;
     private String username;
     private String name;
     private String password;
@@ -17,17 +14,17 @@ public class User {
     public User() {
     }
 
-    public User(String userId, String username, String name, String password) {
+    public User(ObjectId userId, String username, String name, String password) {
         this.userId = userId;
         this.username = username;
         this.name = name;
         this.password = password;
     }
 
-    public String getUserId() {
+    public ObjectId getUserId() {
         return userId;
     }
-    public void setUserId(String userId) {
+    public void setUserId(ObjectId userId) {
         this.userId = userId;
     }
     public String getUsername() {
