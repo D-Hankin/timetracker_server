@@ -24,7 +24,7 @@ public class SecurityResource {
     @POST
     @Path("/login")
     @PermitAll
-    public Response userLogin(@Valid final LoginDto loginDto) {
+    public Response userLogin(@Valid final LoginDto loginDto) throws Exception {
         return securityService.userLogin(loginDto);
     }
 

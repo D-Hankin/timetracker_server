@@ -34,7 +34,7 @@ public class UserService {
         MongoCollection<Document> collection = database.getCollection("users");
         Document query = new Document("username", username);
 
-        return Response.ok().entity(collection.find(query).first()).build();
+        return Response.ok(collection.find(query).first()).build();
     }
 
     public Response createUser(User user) {
@@ -85,6 +85,11 @@ public class UserService {
         }
 
         return permissions;
+    }
+
+    public Response edit_user(User user, String jwtToken) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'edit_user'");
     }
     
 }
