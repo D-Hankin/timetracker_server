@@ -3,10 +3,6 @@ package org.timetracker_server.models;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 
-import jakarta.validation.constraints.Email;
-
-import java.util.Set;
-
 public class User {
     
     @BsonId
@@ -14,18 +10,18 @@ public class User {
     private String username;
     private String name;
     private String password;
-    private Email email;
-    private Set<ObjectId> roleId;
+    private String email;
+    private ObjectId roleId;
 
     public User() {
     }
 
-    public User(ObjectId userId, String username, String name, String password, Set<ObjectId> roleIds) {
+    public User(ObjectId userId, String username, String name, String password, ObjectId roleId, String email) {
         this.userId = userId;
         this.username = username;
         this.name = name;
         this.password = password;
-        this.roleId = roleIds;
+        this.roleId = roleId;
         this.email = email;
     }
 
@@ -61,19 +57,19 @@ public class User {
         this.password = password;
     }
 
-    public Set<ObjectId> getRoleId() {
+    public ObjectId getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Set<ObjectId> roleId) {
+    public void setRoleId(ObjectId roleId) {
         this.roleId = roleId;
     }
 
-    public Email getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(Email email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 }

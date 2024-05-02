@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.bson.Document;
+import org.mindrot.jbcrypt.BCrypt;
 import org.timetracker_server.models.User;
 
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -36,10 +38,34 @@ public class UserService {
     }
 
     public Response createUser(User user) {
-        // user.setRoleId(
-        //     mongoClient.getDatabase("timetracker")
-        //     .getCollection("roles"));
-        return null;
+        try {
+            MongoDatabase database = mongoClient.getDatabase("timetracker");
+            MongoCollection<Document> roleCollection = database.getCollection("roles");
+            Document query = new Document("role", "user");
+            Document roleDocument = roleCollection.find(query).first();
+
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+
+            Document userDocument = new Document()
+            .append("username", user.getUsername())
+            .append("name", user.getName())
+            .append("password", hashedPassword)
+            .append("email", user.getEmail())
+            .append("roleId", roleDocument.getObjectId("_id").toHexString());
+
+            MongoCollection<Document> userCollection = database.getCollection("users");
+            userCollection.insertOne(userDocument);
+            Document returnQuery = new Document("username", user.getUsername()); 
+            userDocument = userCollection.find(returnQuery).first();
+            userDocument.put("_id", userDocument.getObjectId("_id").toHexString());
+            userDocument.remove("password");
+            
+            return Response.ok().entity(userDocument).build();
+
+        } catch(MongoException e) {
+            return Response.status(Response.Status.EXPECTATION_FAILED).entity(e).build();
+        }
+        
     }
 
     public Set<String> getUserPermissions(final User user) {

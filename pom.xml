@@ -95,14 +95,19 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-test-security</artifactId>
       <scope>test</scope>
-    <version>3.9.4</version>
-</dependency>
-<dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-test-security-jwt</artifactId>
-    <scope>test</scope>
-    <version>3.9.4</version>
-</dependency>
+      <version>3.9.4</version>
+    </dependency>
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-test-security-jwt</artifactId>
+        <scope>test</scope>
+        <version>3.9.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mindrot</groupId>
+      <artifactId>jbcrypt</artifactId>
+      <version>0.4</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

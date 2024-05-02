@@ -1,0 +1,9 @@
+org\timetracker_server\services\SecurityService.class
+org\timetracker_server\GreetingResource.class
+org\timetracker_server\models\LoginDto.class
+org\timetracker_server\resources\SecurityResource.class
+org\timetracker_server\models\User.class
+org\timetracker_server\models\TokenResponse.class
+org\timetracker_server\resources\UserResource.class
+org\timetracker_server\models\Role.class
+org\timetracker_server\services\UserService.class
