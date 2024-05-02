@@ -21,6 +21,9 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 public class UserService {
 
+    @Inject
+    SecurityService securityService;
+
     private final MongoClient mongoClient;
 
     @Inject
@@ -87,9 +90,12 @@ public class UserService {
         return permissions;
     }
 
-    public Response edit_user(User user, String jwtToken) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'edit_user'");
+    public Response editUser(User user, String jwtToken) {
+        // if(securityService.verifyJwt(jwtToken)) {
+            
+        // }
+    
+        return null;
     }
     
 }
