@@ -1,4 +1,9 @@
 C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\GreetingResource.java
+C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\models\LoginDto.java
+C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\models\Role.java
+C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\models\TokenResponse.java
 C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\models\User.java
+C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\resources\SecurityResource.java
 C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\resources\UserResource.java
+C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\services\SecurityService.java
 C:\Users\david\repos\github\timetracker_server\src\main\java\org\timetracker_server\services\UserService.java

@@ -1,6 +1,8 @@
 package org.timetracker_server.resources;
 
 import org.bson.Document;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.timetracker_server.models.User;
 import org.timetracker_server.services.UserService;
 
 import com.mongodb.client.MongoClient;
@@ -14,6 +16,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -52,6 +55,12 @@ public class UserResource {
     public Response findUser(@HeaderParam("username") String username) {
         System.out.println("here i am");
         return userService.findUser(username);
+    }
+
+    @POST
+    @Path("/create-user")
+    public Response createUser(@RequestBody User user) {
+        return userService.createUser(user);
     }
 
 }

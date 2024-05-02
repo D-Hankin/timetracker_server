@@ -47,7 +47,7 @@ io.quarkus:quarkus-resteasy::jar:3.9.5
 io.quarkus:quarkus-security-runtime-spi::jar:3.9.5
 io.quarkus:quarkus-security::jar:3.9.5
 io.quarkus:quarkus-smallrye-context-propagation::jar:3.9.5
-io.quarkus:quarkus-smallrye-jwt-build::jar:3.9.5
+io.quarkus:quarkus-smallrye-jwt-build::jar:3.9.4
 io.quarkus:quarkus-smallrye-jwt::jar:3.9.5
 io.quarkus:quarkus-smallrye-openapi::jar:3.9.5
 io.quarkus:quarkus-swagger-ui::jar:3.9.5
