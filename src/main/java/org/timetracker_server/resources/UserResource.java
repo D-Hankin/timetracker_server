@@ -16,6 +16,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -61,6 +62,12 @@ public class UserResource {
     @Path("/create-user")
     public Response createUser(@RequestBody User user) {
         return userService.createUser(user);
+    }
+
+    @PATCH
+    @Path("/edit_user")
+    public Response editUser(@RequestBody User user, @HeaderParam("Authorization") String jwtToken) {
+        return userService.edit_user(user, jwtToken);
     }
 
 }

@@ -3,19 +3,11 @@ package org.timetracker_server.services;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.AlgorithmParameters;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
-import java.security.Key;
-
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 import java.util.Set;
-
-import javax.crypto.Cipher;
-import javax.crypto.EncryptedPrivateKeyInfo;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -57,37 +49,25 @@ public class SecurityService {
         return user != null && BCrypt.checkpw(password, user.getPassword());
     }
     
-    private static PrivateKey loadPrivateKey(String privateKeyPath, String passphrase) throws Exception {
+    private static PrivateKey loadPrivateKey(String privateKeyPath) throws Exception {
         byte[] keyBytes = Files.readAllBytes(Paths.get(privateKeyPath));
         String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
-        keyContent = keyContent.replace("-----BEGIN RSA PRIVATE KEY-----", "")
-                               .replace("-----END RSA PRIVATE KEY-----", "")
+        keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
+                               .replace("-----END PRIVATE KEY-----", "")
                                .replaceAll("\\s", "");
         byte[] decodedKeyBytes = Base64.getDecoder().decode(keyContent);
     
-        PKCS8EncodedKeySpec spec;
-        if (passphrase != null && !passphrase.isEmpty()) {
-        EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = new EncryptedPrivateKeyInfo(decodedKeyBytes);
-        Cipher cipher = Cipher.getInstance(encryptedPrivateKeyInfo.getAlgName());
-        PBEKeySpec pbeKeySpec = new PBEKeySpec(passphrase.toCharArray());
-        SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(encryptedPrivateKeyInfo.getAlgName());
-        Key secret = secretKeyFactory.generateSecret(pbeKeySpec);
-        AlgorithmParameters algParams = encryptedPrivateKeyInfo.getAlgParameters();
-        cipher.init(Cipher.DECRYPT_MODE, secret, algParams);
-        spec = encryptedPrivateKeyInfo.getKeySpec(cipher);
-    } else {
-        spec = new PKCS8EncodedKeySpec(decodedKeyBytes);
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decodedKeyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return keyFactory.generatePrivate(spec);
     }
-
-    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-    return keyFactory.generatePrivate(spec);
-}
+    
 
 
     private String generateJwtToken(final User user) throws Exception {
 
         Set<String> userPermissions = userService.getUserPermissions(user);
-        PrivateKey privateKey = loadPrivateKey("src/main/resources/privateKey.pem", "timetracker");
+        PrivateKey privateKey = loadPrivateKey("src/main/resources/privateKey.pem");
         System.out.println(privateKey);
         return Jwt.issuer("the-dark-lord")
             .upn(user.getUsername())
