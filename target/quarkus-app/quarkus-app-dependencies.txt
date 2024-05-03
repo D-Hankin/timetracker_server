@@ -10,6 +10,8 @@ commons-io:commons-io::jar:2.15.1
 dnsjava:dnsjava::jar:3.5.3
 io.github.crac:org-crac::jar:0.1.3
 io.jsonwebtoken:jjwt-api::jar:0.12.5
+io.jsonwebtoken:jjwt-impl::jar:0.12.5
+io.jsonwebtoken:jjwt-jackson::jar:0.12.5
 io.netty:netty-buffer::jar:4.1.108.Final
 io.netty:netty-codec-dns::jar:4.1.108.Final
 io.netty:netty-codec-haproxy::jar:4.1.108.Final

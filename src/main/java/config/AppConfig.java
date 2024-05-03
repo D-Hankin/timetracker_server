@@ -1,17 +1,9 @@
 package config;
 
-import org.eclipse.microprofile.config.inject.ConfigProperties;
+import io.smallrye.config.ConfigMapping;
 
-@ConfigProperties(prefix = "app")
-public class AppConfig {
+@ConfigMapping(prefix = "app")
+public interface AppConfig {
 
-    String jwtIssuer;
-
-    public String getJwtIssuer() {
-        return jwtIssuer;
-    }
-
-    public void setJwtIssuer(String jwtIssuer) {
-        this.jwtIssuer = jwtIssuer;
-    }
+    String jwtIssuer();
 }

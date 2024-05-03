@@ -46,6 +46,7 @@ public class SecurityService {
     @Inject
     AppConfig config;
 
+
     public Response userLogin(final LoginDto loginDto) throws Exception {
         Response userResponse = userService.findUser(loginDto.getUsername());
         Document userDoc = (Document) userResponse.getEntity();
@@ -98,7 +99,7 @@ public class SecurityService {
         Set<String> userPermissions = userService.getUserPermissions(user);
         PrivateKey privateKey = loadPrivateKey("src/main/resources/privateKey.pem");
 
-        return Jwt.issuer(config.getJwtIssuer())
+        return Jwt.issuer(config.jwtIssuer())
             .upn(user.getUsername())
             .groups(userPermissions)
             .expiresIn(86400)
@@ -111,7 +112,7 @@ public class SecurityService {
         PublicKey publicKey = loadPublicKey("src/main/resources/publicKey.pem");
 
         try {
-            return Jwts.parser().requireIssuer(config.getJwtIssuer()).verifyWith(publicKey).build().parseSignedClaims(jwtToken);
+            return Jwts.parser().requireIssuer(config.jwtIssuer()).verifyWith(publicKey).build().parseSignedClaims(jwtToken);
         } catch (SignatureException e) {
             throw new Exception("JWT Signature not valid");
         } catch (ExpiredJwtException e) {
