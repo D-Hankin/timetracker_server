@@ -12,6 +12,10 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import config.AppConfig;
+
+import static com.mongodb.client.model.Filters.eq;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -25,6 +29,9 @@ public class UserService {
 
     @Inject
     SecurityService securityService;
+
+    @Inject 
+    AppConfig config;
 
     private final MongoClient mongoClient;
 
@@ -105,8 +112,34 @@ public class UserService {
         System.out.println("jwtContent User: " + editUserClaim.getPayload().get("upn"));
         System.out.println("jwtContent Email: " + editUserClaim.getPayload().get("email_verified"));
 
-    
-        return Response.ok("Authentication successful").build();
+        Response oldUser = findUser(user.getUsername());
+        Document oldUserDoc = (Document) oldUser.getEntity();
+
+        System.out.println(oldUserDoc.get("username"));
+        System.out.println(oldUserDoc.get("email"));
+
+        if (editUserClaim.getPayload().getIssuer().equals(config.getJwtIssuer()) && editUserClaim.getPayload().get("upn").equals(user.getUsername())) {
+
+            try {
+                MongoDatabase database = mongoClient.getDatabase("timetracker");
+                MongoCollection<Document> collection = database.getCollection("users");
+                System.out.println("id: " + oldUserDoc.getObjectId("_id"));
+
+                oldUserDoc.append("username", user.getUsername())
+                .append("name", user.getName())
+                .append("password", user.getPassword())
+                .append("email", user.getEmail());
+
+                collection.replaceOne(eq("_id", oldUserDoc.getObjectId("_id")), oldUserDoc);
+
+                return Response.ok().entity("You successfully edited your details").build();
+
+            } catch (MongoException e) {
+                return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
+        }
     }
     
 }
