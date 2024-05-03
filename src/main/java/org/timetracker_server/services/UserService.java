@@ -12,6 +12,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -90,12 +92,21 @@ public class UserService {
         return permissions;
     }
 
-    public Response editUser(User user, String jwtToken) {
-        // if(securityService.verifyJwt(jwtToken)) {
-            
-        // }
+    public Response editUser(User user, String jwtToken) throws Exception {
+
+        Jws<Claims> editUserClaim = null;
+        try {
+            editUserClaim = securityService.verifyJwt(jwtToken);
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
+        }
+
+        System.out.println("jwtContent Issuer: " + editUserClaim.getPayload().getIssuer());
+        System.out.println("jwtContent User: " + editUserClaim.getPayload().get("upn"));
+        System.out.println("jwtContent Email: " + editUserClaim.getPayload().get("email_verified"));
+
     
-        return null;
+        return Response.ok("Authentication successful").build();
     }
     
 }

@@ -5,8 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Set;
 
@@ -21,8 +23,12 @@ import org.timetracker_server.models.LoginDto;
 import org.timetracker_server.models.TokenResponse;
 import org.timetracker_server.models.User;
 
-import io.jsonwebtoken.Jwts.*;
-import io.jsonwebtoken.security.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -69,12 +75,25 @@ public class SecurityService {
         return keyFactory.generatePrivate(spec);
     }
     
+    private static PublicKey loadPublicKey(String publicKeyPath) throws Exception {
 
+        byte[] keyBytes = Files.readAllBytes(Paths.get(publicKeyPath));
+        String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
+        keyContent = keyContent.replace("-----BEGIN PUBLIC KEY-----", "")
+                               .replace("-----END PUBLIC KEY-----", "")
+                               .replaceAll("\\s", "");
+        byte[] decodedKeyBytes = Base64.getDecoder().decode(keyContent);
+    
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(decodedKeyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return keyFactory.generatePublic(spec);
+    }
 
     private String generateJwtToken(final User user) throws Exception {
 
         Set<String> userPermissions = userService.getUserPermissions(user);
         PrivateKey privateKey = loadPrivateKey("src/main/resources/privateKey.pem");
+
         return Jwt.issuer("the-dark-lord")
             .upn(user.getUsername())
             .groups(userPermissions)
@@ -83,25 +102,22 @@ public class SecurityService {
             .sign(privateKey);
     }
 
-    public boolean verifyJwt(String jwtToken) throws Exception {
-
-        String[] parts = jwtToken.split("\\.");
-        Base64.Decoder decoder = Base64.getUrlDecoder();
-        String header = new String(decoder.decode(parts[0]));
-        String payload = new String(decoder.decode(parts[1]));
-        System.out.println(header + ",  " + payload);
-        PrivateKey privateKey = loadPrivateKey("src/main/resources/privateKey.pem");
+    public Jws<io.jsonwebtoken.Claims> verifyJwt(String jwtToken) throws Exception {
+        
+        PublicKey publicKey = loadPublicKey("src/main/resources/publicKey.pem");
 
         try {
-            // SecretKey key = Keys.hmacShaKeyFor(privateKey.getBytes(StandardCharsets.UTF_8));
-            // jwtBuilder.signWith(key).compact();
-
-            
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            return Jwts.parser().requireIssuer("the-dark-lord").verifyWith(publicKey).build().parseSignedClaims(jwtToken);
+        } catch (SignatureException e) {
+            throw new Exception("JWT Signature not valid");
+        } catch (ExpiredJwtException e) {
+            throw new Exception("JWT has expired");
+        } catch (UnsupportedJwtException e) {
+            throw new Exception("JWT not supported");
+        } catch (MalformedJwtException e) {
+            throw new Exception("Invalid JWT format");
+        } catch (IllegalArgumentException e) {
+            throw new Exception("Invalid JWT");
         }
     }
 }

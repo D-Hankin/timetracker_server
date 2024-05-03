@@ -66,7 +66,7 @@ public class UserResource {
 
     @PATCH
     @Path("/edit-user")
-    public Response editUser(@RequestBody User user, @HeaderParam("Authorization") String jwtToken) {
+    public Response editUser(@RequestBody User user, @HeaderParam("Authorization") String jwtToken) throws Exception {
         System.out.println("here: " + jwtToken);
         return userService.editUser(user, jwtToken);
     }
