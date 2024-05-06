@@ -1,5 +1,8 @@
 package org.timetracker_server.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
 
 import com.mongodb.MongoException;
@@ -49,8 +52,10 @@ public class EntryService {
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
                 MongoCollection<Document> collection = database.getCollection("entries");
                 Document query = new Document("username", username);
+                List<Document> documents = new ArrayList<>();
+                collection.find(query).iterator().forEachRemaining(documents::add);
         
-                return Response.ok(collection.find(query).iterator()).build();
+                return Response.ok(documents).build();
             } catch (MongoException e) {
                 return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
             }
