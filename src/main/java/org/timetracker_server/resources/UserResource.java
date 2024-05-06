@@ -61,6 +61,8 @@ public class UserResource {
     @POST
     @Path("/create-user")
     public Response createUser(@RequestBody User user) {
+        System.out.println("Stringyyyy: " + System.getenv("MONGODBSTRING"));
+        System.out.println(System.getenv("JWT_ISSUER"));
         return userService.createUser(user);
     }
 
