@@ -6,4 +6,6 @@ import io.smallrye.config.ConfigMapping;
 public interface AppConfig {
 
     String jwtIssuer();
+
+    String mongoUri();
 }
