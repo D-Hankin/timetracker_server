@@ -8,4 +8,6 @@ public interface AppConfig {
     String jwtIssuer();
 
     String mongoUri();
+
+    String privateKey();
 }
