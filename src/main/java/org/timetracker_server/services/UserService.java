@@ -118,7 +118,9 @@ public class UserService {
         System.out.println(oldUserDoc.get("username"));
         System.out.println(oldUserDoc.get("email"));
 
-        if (editUserClaim.getPayload().getIssuer().equals(config.jwtIssuer()) && editUserClaim.getPayload().get("upn").equals(user.getUsername())) {
+        String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
+
+        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(user.getUsername())) {
 
             try {
                 MongoDatabase database = mongoClient.getDatabase("timetracker");

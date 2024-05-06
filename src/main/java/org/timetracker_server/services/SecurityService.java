@@ -6,14 +6,10 @@ import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Set;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -68,16 +64,31 @@ public class SecurityService {
     }
     
     private static PrivateKey loadPrivateKey(String privateKeyPath) throws Exception {
-        byte[] keyBytes = Files.readAllBytes(Paths.get(privateKeyPath));
-        String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
-        keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
-                               .replace("-----END PRIVATE KEY-----", "")
-                               .replaceAll("\\s", "");
-        byte[] decodedKeyBytes = Base64.getDecoder().decode(keyContent);
-    
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decodedKeyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePrivate(spec);
+
+        if (!Files.exists(Paths.get(privateKeyPath))) {
+
+            String privateKeyString = System.getenv("PRIVATE_KEY");
+            byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            
+            return keyFactory.generatePrivate(keySpec);
+
+        } else {
+            
+            byte[] keyBytes = Files.readAllBytes(Paths.get(privateKeyPath));
+            String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
+            keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
+                                   .replace("-----END PRIVATE KEY-----", "")
+                                   .replaceAll("\\s", "");
+            byte[] decodedKeyBytes = Base64.getDecoder().decode(keyContent);
+        
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decodedKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+            return keyFactory.generatePrivate(spec);
+        }
+
     }
     
     private static PublicKey loadPublicKey(String publicKeyPath) throws Exception {
@@ -99,30 +110,47 @@ public class SecurityService {
         Set<String> userPermissions = userService.getUserPermissions(user);
         PrivateKey privateKey = loadPrivateKey("src/main/resources/privateKey.pem");
 
-        return Jwt.issuer(config.jwtIssuer())
+        String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
+
+        return Jwt.issuer(issuer)
             .upn(user.getUsername())
             .groups(userPermissions)
             .expiresIn(86400)
             .claim(Claims.email_verified.name(), user.getEmail())
             .sign(privateKey);
+
+
     }
 
     public Jws<io.jsonwebtoken.Claims> verifyJwt(String jwtToken) throws Exception {
         
         PublicKey publicKey = loadPublicKey("src/main/resources/publicKey.pem");
 
+        String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
+
         try {
-            return Jwts.parser().requireIssuer(config.jwtIssuer()).verifyWith(publicKey).build().parseSignedClaims(jwtToken);
+            return Jwts.parser().requireIssuer(issuer).verifyWith(publicKey).build().parseSignedClaims(jwtToken);
         } catch (SignatureException e) {
-            throw new Exception("JWT Signature not valid");
+            Exception exception = new Exception("JWT Signature not valid");
+            exception.initCause(e);
+            throw exception;
         } catch (ExpiredJwtException e) {
-            throw new Exception("JWT has expired");
+            Exception exception = new Exception("JWT has expired");
+            exception.initCause(e);
+            throw exception;
         } catch (UnsupportedJwtException e) {
-            throw new Exception("JWT not supported");
+            Exception exception = new Exception("JWT not supported");
+            exception.initCause(e);
+            throw exception;
         } catch (MalformedJwtException e) {
-            throw new Exception("Invalid JWT format");
+            Exception exception = new Exception("Invalid JWT format");
+            exception.initCause(e);
+            throw exception;
         } catch (IllegalArgumentException e) {
-            throw new Exception("Invalid JWT");
+            Exception exception = new Exception("Invalid JWT");
+            exception.initCause(e);
+            throw exception;
         }
+        
     }
 }
