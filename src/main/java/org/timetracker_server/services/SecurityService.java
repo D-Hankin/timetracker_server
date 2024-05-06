@@ -79,7 +79,7 @@ public class SecurityService {
                 
                 return keyFactory.generatePrivate(keySpec);
             } catch (Exception e) {
-                System.out.println("error: " + e.getMessage());
+                System.out.println(e.getMessage());
                 return null;
             }
 
@@ -125,22 +125,15 @@ public class SecurityService {
             .expiresIn(86400)
             .claim(Claims.email_verified.name(), user.getEmail())
             .sign(privateKey);
-
-
     }
 
     public Jws<io.jsonwebtoken.Claims> verifyJwt(String jwtToken) throws Exception {
         
-        System.out.println("Issuer: " + config.jwtIssuer());
-        System.out.println(System.getenv("PUBLIC_KEY"));
         PublicKey publicKey = loadPublicKey();
         
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
         
-        System.out.println(issuer);
-        
         try {
-            System.out.println("inhereeeee");
             return Jwts.parser().requireIssuer(issuer).verifyWith(publicKey).build().parseSignedClaims(jwtToken);
         } catch (SignatureException e) {
             Exception exception = new Exception("JWT Signature not valid");
