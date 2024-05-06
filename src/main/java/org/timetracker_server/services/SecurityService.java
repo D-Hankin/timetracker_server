@@ -132,13 +132,14 @@ public class SecurityService {
 
     public Jws<io.jsonwebtoken.Claims> verifyJwt(String jwtToken) throws Exception {
         
-        PublicKey publicKey = loadPublicKey("src/main/resources/publicKey.pem");
         System.out.println("Issuer: " + config.jwtIssuer());
-
+        System.out.println(loadPublicKey("src/main/resources/publicKey.pem"));
+        PublicKey publicKey = loadPublicKey("src/main/resources/publicKey.pem");
+        
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
-
+        
         System.out.println(issuer);
-
+        
         try {
             System.out.println("inhereeeee");
             return Jwts.parser().requireIssuer(issuer).verifyWith(publicKey).build().parseSignedClaims(jwtToken);
