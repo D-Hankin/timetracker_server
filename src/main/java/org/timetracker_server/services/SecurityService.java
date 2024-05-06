@@ -63,11 +63,12 @@ public class SecurityService {
         return user != null && BCrypt.checkpw(password, user.getPassword());
     }
     
-    private static PrivateKey loadPrivateKey(String privateKeyPath) throws Exception {
+    private PrivateKey loadPrivateKey(String privateKeyPath) throws Exception {
 
         if (!Files.exists(Paths.get(privateKeyPath))) {
 
-            String privateKeyString = System.getenv("PRIVATE_KEY");
+            // String privateKeyString = System.getenv("PRIVATE_KEY");
+            String privateKeyString = config.privateKey();
             byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
