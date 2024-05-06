@@ -65,16 +65,23 @@ public class SecurityService {
     
     private PrivateKey loadPrivateKey() throws Exception {
         System.out.println("I made it here!!!!");
+
+
         if (!Files.exists(Paths.get("src/main/resources/privateKey.pem"))) {
 
-            String privateKeyString = System.getenv("PRIVATE_KEY");
-            System.out.println("Key" + privateKeyString);
-            // String privateKeyString = config.privateKey();
-            byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
-            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            
-            return keyFactory.generatePrivate(keySpec);
+            try {
+                String privateKeyString = System.getenv("PRIVATE_KEY");
+                System.out.println("Key" + privateKeyString);
+                // String privateKeyString = config.privateKey();
+                byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
+                PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                
+                return keyFactory.generatePrivate(keySpec);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
 
         } else {
             System.out.println("UOHHHHH");
