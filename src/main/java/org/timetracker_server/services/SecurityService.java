@@ -71,15 +71,19 @@ public class SecurityService {
 
             try {
                 String privateKeyString = System.getenv("PRIVATE_KEY");
-                System.out.println("Key" + privateKeyString);
+                System.out.println("Key: " + privateKeyString);
                 // String privateKeyString = config.privateKey();
+
+                privateKeyString = privateKeyString.replace("-----BEGIN PRIVATE KEY-----", "")
+                                                    .replace("-----END PRIVATE KEY-----", "")
+                                                    .replaceAll("\\s", "");
                 byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
                 PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 
                 return keyFactory.generatePrivate(keySpec);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("error: " + e.getMessage());
                 return null;
             }
 
