@@ -63,12 +63,12 @@ public class SecurityService {
         return user != null && BCrypt.checkpw(password, user.getPassword());
     }
     
-    private PrivateKey loadPrivateKey(String privateKeyPath) throws Exception {
+    private PrivateKey loadPrivateKey() throws Exception {
         System.out.println("I made it here!!!!");
-        if (!Files.exists(Paths.get(privateKeyPath))) {
+        if (!Files.exists(Paths.get("src/main/resources/privateKey.pem"))) {
 
             String privateKeyString = System.getenv("PRIVATE_KEY");
-            System.out.println("Key" + privateKeyPath);
+            System.out.println("Key" + privateKeyString);
             // String privateKeyString = config.privateKey();
             byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
@@ -78,7 +78,7 @@ public class SecurityService {
 
         } else {
             System.out.println("UOHHHHH");
-            byte[] keyBytes = Files.readAllBytes(Paths.get(privateKeyPath));
+            byte[] keyBytes = Files.readAllBytes(Paths.get("src/main/resources/privateKey.pem"));
             String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
             keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
                                    .replace("-----END PRIVATE KEY-----", "")
@@ -110,7 +110,7 @@ public class SecurityService {
     private String generateJwtToken(final User user) throws Exception {
 
         Set<String> userPermissions = userService.getUserPermissions(user);
-        PrivateKey privateKey = loadPrivateKey("src/main/resources/privateKey.pem");
+        PrivateKey privateKey = loadPrivateKey();
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
 
