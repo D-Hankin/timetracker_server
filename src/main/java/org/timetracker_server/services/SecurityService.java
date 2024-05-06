@@ -68,6 +68,7 @@ public class SecurityService {
         if (!Files.exists(Paths.get(privateKeyPath))) {
 
             String privateKeyString = System.getenv("PRIVATE_KEY");
+            System.out.println("Key" + privateKeyPath);
             // String privateKeyString = config.privateKey();
             byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
@@ -76,7 +77,7 @@ public class SecurityService {
             return keyFactory.generatePrivate(keySpec);
 
         } else {
-            
+            System.out.println("UOHHHHH");
             byte[] keyBytes = Files.readAllBytes(Paths.get(privateKeyPath));
             String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
             keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
