@@ -118,7 +118,6 @@ public class UserService {
             try {
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
                 MongoCollection<Document> collection = database.getCollection("users");
-                System.out.println("id: " + oldUserDoc.getObjectId("_id"));
 
                 oldUserDoc.append("username", user.getUsername())
                 .append("name", user.getName())
