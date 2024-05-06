@@ -25,6 +25,8 @@ public class SecurityResource {
     @Path("/login")
     @PermitAll
     public Response userLogin(@Valid final LoginDto loginDto) throws Exception {
+
+        System.out.println("Loginnnnnn" + loginDto);
         return securityService.userLogin(loginDto);
     }
 
