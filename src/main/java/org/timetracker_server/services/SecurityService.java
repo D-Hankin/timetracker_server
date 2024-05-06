@@ -99,10 +99,9 @@ public class SecurityService {
 
     }
     
-    private static PublicKey loadPublicKey(String publicKeyPath) throws Exception {
+    private static PublicKey loadPublicKey() throws Exception {
 
-        byte[] keyBytes = Files.readAllBytes(Paths.get(publicKeyPath));
-        String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
+        String keyContent = System.getenv("PUBLIC_KEY");
         keyContent = keyContent.replace("-----BEGIN PUBLIC KEY-----", "")
                                .replace("-----END PUBLIC KEY-----", "")
                                .replaceAll("\\s", "");
@@ -133,8 +132,8 @@ public class SecurityService {
     public Jws<io.jsonwebtoken.Claims> verifyJwt(String jwtToken) throws Exception {
         
         System.out.println("Issuer: " + config.jwtIssuer());
-        System.out.println(loadPublicKey("src/main/resources/publicKey.pem"));
-        PublicKey publicKey = loadPublicKey("src/main/resources/publicKey.pem");
+        System.out.println(System.getenv("PUBLIC_KEY"));
+        PublicKey publicKey = loadPublicKey();
         
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
         
