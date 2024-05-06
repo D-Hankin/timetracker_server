@@ -108,15 +108,8 @@ public class UserService {
             return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
         }
 
-        System.out.println("jwtContent Issuer: " + editUserClaim.getPayload().getIssuer());
-        System.out.println("jwtContent User: " + editUserClaim.getPayload().get("upn"));
-        System.out.println("jwtContent Email: " + editUserClaim.getPayload().get("email_verified"));
-
         Response oldUser = findUser(user.getUsername());
         Document oldUserDoc = (Document) oldUser.getEntity();
-
-        System.out.println(oldUserDoc.get("username"));
-        System.out.println(oldUserDoc.get("email"));
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
 

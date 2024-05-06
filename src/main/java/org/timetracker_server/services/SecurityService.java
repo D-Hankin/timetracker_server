@@ -64,15 +64,11 @@ public class SecurityService {
     }
     
     private PrivateKey loadPrivateKey() throws Exception {
-        System.out.println("I made it here!!!!");
-
 
         if (!Files.exists(Paths.get("src/main/resources/privateKey.pem"))) {
 
             try {
                 String privateKeyString = System.getenv("PRIVATE_KEY");
-                System.out.println("Key: " + privateKeyString);
-                // String privateKeyString = config.privateKey();
 
                 privateKeyString = privateKeyString.replace("-----BEGIN PRIVATE KEY-----", "")
                                                     .replace("-----END PRIVATE KEY-----", "")
@@ -88,7 +84,6 @@ public class SecurityService {
             }
 
         } else {
-            System.out.println("UOHHHHH");
             byte[] keyBytes = Files.readAllBytes(Paths.get("src/main/resources/privateKey.pem"));
             String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
             keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
@@ -138,10 +133,14 @@ public class SecurityService {
     public Jws<io.jsonwebtoken.Claims> verifyJwt(String jwtToken) throws Exception {
         
         PublicKey publicKey = loadPublicKey("src/main/resources/publicKey.pem");
+        System.out.println("Issuer: " + config.jwtIssuer());
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
 
+        System.out.println(issuer);
+
         try {
+            System.out.println("inhereeeee");
             return Jwts.parser().requireIssuer(issuer).verifyWith(publicKey).build().parseSignedClaims(jwtToken);
         } catch (SignatureException e) {
             Exception exception = new Exception("JWT Signature not valid");
