@@ -64,11 +64,11 @@ public class SecurityService {
     }
     
     private PrivateKey loadPrivateKey(String privateKeyPath) throws Exception {
-
+        System.out.println("I made it here!!!!");
         if (!Files.exists(Paths.get(privateKeyPath))) {
 
-            // String privateKeyString = System.getenv("PRIVATE_KEY");
-            String privateKeyString = config.privateKey();
+            String privateKeyString = System.getenv("PRIVATE_KEY");
+            // String privateKeyString = config.privateKey();
             byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
