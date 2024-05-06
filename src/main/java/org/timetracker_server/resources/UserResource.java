@@ -63,6 +63,7 @@ public class UserResource {
     public Response createUser(@RequestBody User user) {
         System.out.println("Stringyyyy: " + System.getenv("MONGODBSTRING"));
         System.out.println(System.getenv("JWT_ISSUER"));
+        System.out.println(System.getenv("PRIVATE_KEY"));
         return userService.createUser(user);
     }
 
