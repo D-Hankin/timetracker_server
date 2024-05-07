@@ -13,6 +13,8 @@ public class Entry {
     private LocalDateTime stopTime;
     private String username;
 
+    public Entry() {}
+
     public Entry(String entryId, String name, LocalDateTime startTime, LocalDateTime stopTime, String username) {
         this.entryId = entryId;
         this.name = name;
