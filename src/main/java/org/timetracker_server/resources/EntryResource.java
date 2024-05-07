@@ -6,6 +6,7 @@ import org.timetracker_server.services.EntryService;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.PATCH;
@@ -37,8 +38,20 @@ public class EntryResource {
 
     @PATCH
     @Path("/end-entry")
-    public Response stopEntry(@RequestBody Entry entry, @HeaderParam("stopTime") String stopTime, @HeaderParam("Authorization") String jwtToken) {
-        return entryService.stopEntry(entry, stopTime, jwtToken);
+    public Response stopEntry(@RequestBody Entry entry, @HeaderParam("minutes") String minutes, @HeaderParam("Authorization") String jwtToken) {
+        return entryService.stopEntry(entry, minutes, jwtToken);
+    }
+
+    @DELETE
+    @Path("/delete-entry")
+    public Response deleteEntry(@HeaderParam("entryId") String entryId, @HeaderParam("Authorization") String jwtToken) {
+        return entryService.deleteEntry(entryId, jwtToken);
+    }
+
+    @PATCH
+    @Path("/edit-entry")
+    public Response editEntry(@RequestBody Entry entry, @HeaderParam("Authorization") String jwtToken) {
+        return entryService.editEntry(entry, jwtToken);
     }
     
 }

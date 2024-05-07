@@ -9,18 +9,16 @@ public class Entry {
     @BsonId
     private String entryId;
     private String name;
-    private LocalDateTime startTime;
-    private LocalDateTime stopTime;
     private String username;
+    private int minutes;
 
     public Entry() {}
 
-    public Entry(String entryId, String name, LocalDateTime startTime, LocalDateTime stopTime, String username) {
+    public Entry(String entryId, String name, LocalDateTime startTime, LocalDateTime stopTime, String username, int minutes) {
         this.entryId = entryId;
         this.name = name;
-        this.startTime = startTime;
-        this.stopTime = stopTime;
         this.username = username;
+        this.minutes = minutes;
     }
 
     public String getEntryId() {
@@ -39,28 +37,20 @@ public class Entry {
         this.name = name;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getStopTime() {
-        return stopTime;
-    }
-
-    public void setStopTime(LocalDateTime stopTime) {
-        this.stopTime = stopTime;
-    }
-
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
     }
 
 
