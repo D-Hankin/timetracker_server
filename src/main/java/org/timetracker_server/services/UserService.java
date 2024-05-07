@@ -162,8 +162,13 @@ public class UserService {
                 FindIterable<Document> documents = collection.find();
                 
                 List<Document> userList = new ArrayList<>();
-    
+                
                 for (Document document : documents) {
+
+                    System.out.println(document.get("roleId"));
+                    Object roleIdValue = document.get("roleId");
+                    System.out.println("here: " + roleIdValue);
+
                     if (document.get("roleId").equals("66335005aad6d2c4821c092b")) {
                         document.remove("password");
                         userList.add(document);
