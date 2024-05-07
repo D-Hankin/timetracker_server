@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.timetracker_server.models.Entry;
 
 import com.mongodb.MongoException;
@@ -123,7 +124,8 @@ public class EntryService {
                 System.out.println(entry.getEntryId());
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
                 MongoCollection<Document> collection = database.getCollection("entries");
-                Document query = new Document("_id", entry.getEntryId());
+                ObjectId queryId = new ObjectId(entry.getEntryId());
+                Document query = new Document("_id", queryId);
                 Document setStopTime = new Document("$set", new Document("stopTime", stopTime));
                 collection.updateOne(query, setStopTime);
                 System.out.println(collection.find(query).first());
