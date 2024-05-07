@@ -1,9 +1,13 @@
 package org.timetracker_server.services;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.Document;
+import org.bson.codecs.jsr310.LocalDateTimeCodec;
 import org.bson.types.ObjectId;
 import org.timetracker_server.models.Entry;
 
@@ -124,9 +128,10 @@ public class EntryService {
                 System.out.println(entry.getEntryId());
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
                 MongoCollection<Document> collection = database.getCollection("entries");
+                SimpleDateFormat convertedTime = new SimpleDateFormat(stopTime);
                 ObjectId queryId = new ObjectId(entry.getEntryId());
                 Document query = new Document("_id", queryId);
-                Document setStopTime = new Document("$set", new Document("stopTime", stopTime));
+                Document setStopTime = new Document("$set", new Document("stopTime", convertedTime));
                 collection.updateOne(query, setStopTime);
                 System.out.println(collection.find(query).first());
                 return Response.ok(collection.find(query).first()).entity("Entry timer has now stopped!").build();
