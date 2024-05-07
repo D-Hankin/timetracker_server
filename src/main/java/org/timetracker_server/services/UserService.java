@@ -150,7 +150,7 @@ public class UserService {
         } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
         }
-
+        System.out.println(editUserClaim.getPayload().get("groups").toString());
         if (editUserClaim.getPayload().get("groups").toString().contains("get_users")) {
 
             try {
@@ -180,14 +180,14 @@ public class UserService {
 
     public Response removeUser(String username, String jwtToken) {
 
-        Jws<Claims> editUserClaim = null;
+        Jws<Claims> deleteUserClaim = null;
         try {
-            editUserClaim = securityService.verifyJwt(jwtToken);
+            deleteUserClaim = securityService.verifyJwt(jwtToken);
         } catch (Exception e) {
             return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
         }
-
-        if (editUserClaim.getPayload().get("groups").toString().contains("delete_user")) {
+        System.out.println(deleteUserClaim.getPayload().get("groups").toString());
+        if (deleteUserClaim.getPayload().get("groups").toString().contains("delete_user")) {
             
             try {
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
