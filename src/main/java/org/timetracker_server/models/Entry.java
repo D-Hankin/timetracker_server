@@ -3,20 +3,17 @@ package org.timetracker_server.models;
 import java.time.LocalDateTime;
 
 import org.bson.codecs.pojo.annotations.BsonId;
-import org.bson.types.ObjectId;
 
 public class Entry {
     
     @BsonId
-    private ObjectId entryId;
+    private String entryId;
     private String name;
     private LocalDateTime startTime;
     private LocalDateTime stopTime;
     private String username;
 
-    public Entry() {}
-
-    public Entry(ObjectId entryId, String name, LocalDateTime startTime, LocalDateTime stopTime, String username) {
+    public Entry(String entryId, String name, LocalDateTime startTime, LocalDateTime stopTime, String username) {
         this.entryId = entryId;
         this.name = name;
         this.startTime = startTime;
@@ -24,11 +21,11 @@ public class Entry {
         this.username = username;
     }
 
-    public ObjectId getEntryId() {
+    public String getEntryId() {
         return entryId;
     }
 
-    public void setEntryId(ObjectId entryId) {
+    public void setEntryId(String entryId) {
         this.entryId = entryId;
     }
 

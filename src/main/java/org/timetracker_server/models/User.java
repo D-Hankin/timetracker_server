@@ -1,22 +1,18 @@
 package org.timetracker_server.models;
 
 import org.bson.codecs.pojo.annotations.BsonId;
-import org.bson.types.ObjectId;
 
 public class User {
     
     @BsonId
-    private ObjectId userId;
+    private String userId;
     private String username;
     private String name;
     private String password;
     private String email;
-    private ObjectId roleId;
+    private String roleId;
 
-    public User() {
-    }
-
-    public User(ObjectId userId, String username, String name, String password, String email, ObjectId roleId) {
+    public User(String userId, String username, String name, String password, String email, String roleId) {
         this.userId = userId;
         this.username = username;
         this.name = name;
@@ -25,11 +21,11 @@ public class User {
         this.email = email;
     }
 
-    public ObjectId getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(ObjectId userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -57,11 +53,11 @@ public class User {
         this.password = password;
     }
 
-    public ObjectId getRoleId() {
+    public String getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(ObjectId roleId) {
+    public void setRoleId(String roleId) {
         this.roleId = roleId;
     }
 
