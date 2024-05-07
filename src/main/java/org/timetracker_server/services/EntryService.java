@@ -15,6 +15,7 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
 
 import config.AppConfig;
 import io.jsonwebtoken.Claims;
@@ -94,13 +95,13 @@ public class EntryService {
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
 
-        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(entry.getUsername())) {
+        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(entry.getUsername()) && !findEntryByName(entry.getName(), entry.getUsername())) {
 
             try {
                 
                 Document entryDocument = new Document()
                 .append("name", entry.getName())
-                .append("startTime", entry.getStartTime())
+                .append("minutes", 0)
                 .append("username", entry.getUsername());
     
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
@@ -119,6 +120,17 @@ public class EntryService {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
         }
 
+    }
+
+    private boolean findEntryByName(String name, String username) {
+        
+        MongoDatabase database = mongoClient.getDatabase("timetracker");
+        MongoCollection<Document> collection = database.getCollection("entries");
+        Document query = new Document();
+        query.append("name", name);
+        query.append("username", username);
+
+        return collection.find(query).first().isEmpty() ? false : true;
     }
 
     public Response stopEntry(Entry entry, String stopTime, String jwtToken) {
@@ -154,5 +166,65 @@ public class EntryService {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
         }
     }
-    
+
+    public Response deleteEntry(String entryId, String jwtToken) {
+
+        Jws<Claims> editUserClaim = null;
+        try {
+            editUserClaim = securityService.verifyJwt(jwtToken);
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
+        }
+
+        Document entry = findEntryById(entryId);
+
+        String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
+
+        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(entry.get("username"))) {
+            
+            try {
+                
+                MongoDatabase database = mongoClient.getDatabase("timetracker");
+                MongoCollection<Document> collection = database.getCollection("entries");
+                ObjectId queryId = new ObjectId(entryId);
+                Document query = new Document("_id", queryId);
+                DeleteResult result = collection.deleteOne(query);
+        
+                if(result.getDeletedCount() > 0) {
+                    return Response.ok().entity("Entry deleted.").build();
+                } else {
+                    return Response.status(Response.Status.NOT_FOUND).entity("Entry not found").build();
+                }
+            } catch (MongoException e) {
+                return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
+        }
+    }
+
+    public Response editEntry(Entry entry, String jwtToken) {
+        
+        Jws<Claims> editEntryClaim = null;
+        try {
+            editEntryClaim = securityService.verifyJwt(jwtToken);
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
+        }
+
+        Document oldEntry = findEntryById(entry.getEntryId());
+
+        
+        return null;
+    }
+
+    private Document findEntryById(String entryId) {
+        
+        MongoDatabase database = mongoClient.getDatabase("timetracker");
+        MongoCollection<Document> collection = database.getCollection("entries");
+        ObjectId queryId = new ObjectId(entryId);
+        Document query = new Document("_id", queryId);
+        Document entry = collection.find(query).first();
+        return entry;
+    }
 }
