@@ -1,6 +1,8 @@
 package org.timetracker_server.services;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.bson.Document;
@@ -8,6 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.timetracker_server.models.User;
 
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -138,10 +141,36 @@ public class UserService {
         }
     }
 
-    // public Response getAllUsers(String jwtToken) {
+    public Response getAllUsers(String jwtToken) {
 
+        Jws<Claims> editUserClaim = null;
+        try {
+            editUserClaim = securityService.verifyJwt(jwtToken);
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
+        }
 
-    //     return null;
-    // }
+        if (editUserClaim.getPayload().get("groups").toString().contains("get_users")) {
+
+            try {
+                MongoDatabase database = mongoClient.getDatabase("timetracker");
+                MongoCollection<Document> collection = database.getCollection("users");
+    
+                FindIterable<Document> documents = collection.find();
+                
+                List<Document> userList = new ArrayList<>();
+    
+                for (Document document : documents) {
+                    userList.add(document);
+                }
+    
+                return Response.ok(userList).build();
+            } catch (MongoException e) {
+                return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorized to do this!").build();
+        }
+    }
     
 }
