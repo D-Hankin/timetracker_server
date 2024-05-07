@@ -92,7 +92,10 @@ public class UserService {
         Document roleDocument = collection.find(query).first();
         System.out.println(roleDocument);
         Set<String> permissions;
+
+        
         if (roleDocument != null) {
+            System.out.println(roleDocument.getString("permissions"));
             String persmissionsString = roleDocument.getString("permissions");
             permissions = Set.of(persmissionsString.split(","));
         } else {
