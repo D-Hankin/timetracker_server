@@ -9,7 +9,6 @@ import java.util.Base64;
 import java.util.Set;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.Claims;
 import org.mindrot.jbcrypt.BCrypt;
 import org.timetracker_server.models.LoginDto;
@@ -43,10 +42,9 @@ public class SecurityService {
     public Response userLogin(final LoginDto loginDto) throws Exception {
         Response userResponse = userService.findUser(loginDto.getUsername());
         Document userDoc = (Document) userResponse.getEntity();
-        ObjectId userId = new ObjectId(userDoc.get("_id").toString());
-        ObjectId roleId = new ObjectId(userDoc.get("roleId").toString());
-        User user = new User(userId, userDoc.get("username").toString(), userDoc.get("name").toString(), userDoc.get("password").toString(), 
-            userDoc.get("email").toString(), roleId);
+     
+        User user = new User(userDoc.get("_id").toString(), userDoc.get("username").toString(), userDoc.get("name").toString(), userDoc.get("password").toString(), 
+            userDoc.get("email").toString(), userDoc.get("roleId").toString());
     
         if (user != null && checkUserCredentials(user, loginDto.getPassword())) {
             String newToken = generateJwtToken(user);

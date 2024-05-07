@@ -72,7 +72,7 @@ public class UserService {
             userCollection.insertOne(userDocument);
             Document returnQuery = new Document("username", user.getUsername()); 
             userDocument = userCollection.find(returnQuery).first();
-            userDocument.put("_id", userDocument.getObjectId("_id").toHexString());
+            userDocument.put("_id", userDocument.getObjectId("_id"));
             userDocument.remove("password");
             
             return Response.ok().entity(userDocument).build();

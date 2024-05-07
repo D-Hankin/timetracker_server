@@ -120,6 +120,7 @@ public class EntryService {
 
             try {
 
+                System.out.println(entry.getEntryId());
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
                 MongoCollection<Document> collection = database.getCollection("entries");
                 Document query = new Document("_id", entry.getEntryId());
