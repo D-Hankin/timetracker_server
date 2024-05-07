@@ -11,6 +11,8 @@ public class Role {
     private String name;
     private Set<Permission> permissions;
 
+    public Role() {}
+
     public Role(String roleId, String name, Set<Permission> permissions) {
         this.roleId = roleId;
         this.name = name;
