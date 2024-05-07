@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.timetracker_server.models.User;
 
@@ -88,7 +89,8 @@ public class UserService {
 
         MongoDatabase database = mongoClient.getDatabase("timetracker");
         MongoCollection<Document> collection = database.getCollection("roles");
-        Document query = new Document("_id", user.getRoleId());
+        ObjectId convertedRoleId = new ObjectId(user.getRoleId());
+        Document query = new Document("_id", convertedRoleId);
         Document roleDocument = collection.find(query).first();
         Set<String> permissions;
 
