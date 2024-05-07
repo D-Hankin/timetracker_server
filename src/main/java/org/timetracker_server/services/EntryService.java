@@ -128,10 +128,9 @@ public class EntryService {
                 System.out.println(entry.getEntryId());
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
                 MongoCollection<Document> collection = database.getCollection("entries");
-                SimpleDateFormat convertedTime = new SimpleDateFormat(stopTime);
                 ObjectId queryId = new ObjectId(entry.getEntryId());
                 Document query = new Document("_id", queryId);
-                Document setStopTime = new Document("$set", new Document("stopTime", convertedTime));
+                Document setStopTime = new Document("$set", new Document("stopTime", stopTime));
                 collection.updateOne(query, setStopTime);
                 System.out.println(collection.find(query).first());
                 return Response.ok(collection.find(query).first()).entity("Entry timer has now stopped!").build();
