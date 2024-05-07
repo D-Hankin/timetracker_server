@@ -164,9 +164,12 @@ public class UserService {
                 List<Document> userList = new ArrayList<>();
     
                 for (Document document : documents) {
-                    userList.add(document);
+                    if (document.get("roleId").equals("66334e3caad6d2c4821c0929")) {
+                        document.remove("password");
+                        userList.add(document);
+                    }
                 }
-    
+                        
                 return Response.ok(userList).build();
             } catch (MongoException e) {
                 return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
