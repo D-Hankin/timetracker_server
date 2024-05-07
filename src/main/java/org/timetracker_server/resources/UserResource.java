@@ -29,6 +29,12 @@ public class UserResource {
         return userService.findUser(username);
     }
 
+    // @GET
+    // @Path("/admin/all")
+    // public Response getAllUsers(@HeaderParam("Authorization") String jwtToken) {
+    //     return userService.getAllUsers(jwtToken);
+    // }
+
     @POST
     @Path("/create-user")
     public Response createUser(@RequestBody User user) {

@@ -63,7 +63,7 @@ public class UserService {
             .append("name", user.getName())
             .append("password", hashedPassword)
             .append("email", user.getEmail())
-            .append("roleId", roleDocument.getObjectId("_id").toHexString());
+            .append("roleId", roleDocument.getObjectId("_id"));
 
             MongoCollection<Document> userCollection = database.getCollection("users");
             userCollection.insertOne(userDocument);
@@ -84,13 +84,13 @@ public class UserService {
 
         MongoDatabase database = mongoClient.getDatabase("timetracker");
         MongoCollection<Document> collection = database.getCollection("roles");
-
-        Document query = new Document("persmissions", user.getRoleId());
+        System.out.println(user.getRoleId());
+        Document query = new Document("_id", user.getRoleId());
         Document roleDocument = collection.find(query).first();
-
+        System.out.println(roleDocument);
         Set<String> permissions;
         if (roleDocument != null) {
-            String persmissionsString = roleDocument.getString("persmissions");
+            String persmissionsString = roleDocument.getString("permissions");
             permissions = Set.of(persmissionsString.split(","));
         } else {
             return Collections.emptySet();
@@ -113,7 +113,9 @@ public class UserService {
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
 
-        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(user.getUsername())) {
+        System.out.println(editUserClaim.getPayload().get("groups").toString());
+
+        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(user.getUsername()) && editUserClaim.getPayload().get("groups").toString().contains("edit_user")) {
 
             try {
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
@@ -135,5 +137,11 @@ public class UserService {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
         }
     }
+
+    // public Response getAllUsers(String jwtToken) {
+
+
+    //     return null;
+    // }
     
 }
