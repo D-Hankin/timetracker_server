@@ -1,8 +1,5 @@
 package org.timetracker_server.resources;
 
-import java.time.LocalDateTime;
-
-import org.bson.Document;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.timetracker_server.models.Entry;
 import org.timetracker_server.services.EntryService;
@@ -11,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -37,9 +35,9 @@ public class EntryResource {
         return entryService.startEntry(entry, jwtToken);
     }
 
-    @POST
+    @PATCH
     @Path("/end-entry")
-    public Response stopEntry(@RequestBody Entry entry, LocalDateTime stopTime, @HeaderParam("Authorization") String jwtToken) {
+    public Response stopEntry(@RequestBody Entry entry, @HeaderParam("stopTime") String stopTime, @HeaderParam("Authorization") String jwtToken) {
         return entryService.stopEntry(entry, stopTime, jwtToken);
     }
     
