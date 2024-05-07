@@ -65,7 +65,7 @@ public class SecurityService {
     
     private PrivateKey loadPrivateKey() throws Exception {
 
-        if (!Files.exists(Paths.get("src/main/resources/privateKey.pem"))) {
+        // if (!Files.exists(Paths.get("src/main/resources/privateKey.pem"))) {
 
             try {
                 String privateKeyString = System.getenv("PRIVATE_KEY");
@@ -83,25 +83,27 @@ public class SecurityService {
                 return null;
             }
 
-        } else {
-            byte[] keyBytes = Files.readAllBytes(Paths.get("src/main/resources/privateKey.pem"));
-            String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
-            keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
-                                   .replace("-----END PRIVATE KEY-----", "")
-                                   .replaceAll("\\s", "");
-            byte[] decodedKeyBytes = Base64.getDecoder().decode(keyContent);
+        // } else {
+        //     byte[] keyBytes = Files.readAllBytes(Paths.get("src/main/resources/privateKey.pem"));
+        //     String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
+        //     System.out.println(keyContent);
+        //     keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
+        //                            .replace("-----END PRIVATE KEY-----", "")
+        //                            .replaceAll("\\s", "");
+        //     byte[] decodedKeyBytes = Base64.getDecoder().decode(keyContent);
         
-            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decodedKeyBytes);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        //     PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decodedKeyBytes);
+        //     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
-            return keyFactory.generatePrivate(spec);
-        }
+        //     return keyFactory.generatePrivate(spec);
+        // }
 
     }
     
     private static PublicKey loadPublicKey() throws Exception {
 
         String keyContent = System.getenv("PUBLIC_KEY");
+        System.out.println(keyContent);
         keyContent = keyContent.replace("-----BEGIN PUBLIC KEY-----", "")
                                .replace("-----END PUBLIC KEY-----", "")
                                .replaceAll("\\s", "");
@@ -116,6 +118,8 @@ public class SecurityService {
 
         Set<String> userPermissions = userService.getUserPermissions(user);
         PrivateKey privateKey = loadPrivateKey();
+
+        System.out.println(userPermissions);
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
 
