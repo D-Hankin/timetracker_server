@@ -1,6 +1,5 @@
 package org.timetracker_server.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import com.mongodb.client.MongoDatabase;
 import config.AppConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.netty.handler.codec.dns.DnsPtrRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -106,7 +104,7 @@ public class EntryService {
 
     }
 
-    public Response stopEntry(Entry entry, LocalDateTime stopTime, String jwtToken) {
+    public Response stopEntry(Entry entry, String stopTime, String jwtToken) {
 
         Jws<Claims> editUserClaim = null;
         
@@ -127,8 +125,8 @@ public class EntryService {
                 Document query = new Document("_id", entry.getEntryId());
                 Document setStopTime = new Document("$set", new Document("stopTime", stopTime));
                 collection.updateOne(query, setStopTime);
-
-                return Response.ok(collection.find(query).first()).build();
+                System.out.println(collection.find(query).first());
+                return Response.ok(collection.find(query).first()).entity("Entry timer has now stopped!").build();
                 
             } catch (MongoException e) {
                 return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
