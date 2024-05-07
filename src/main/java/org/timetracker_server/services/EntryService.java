@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+import org.timetracker_server.models.Entry;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
@@ -56,6 +57,39 @@ public class EntryService {
                 collection.find(query).iterator().forEachRemaining(documents::add);
         
                 return Response.ok(documents).build();
+            } catch (MongoException e) {
+                return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
+        }
+
+    }
+
+    public Response createEntry(Entry entry, String jwtToken) {
+
+        Jws<Claims> editUserClaim = null;
+        try {
+            editUserClaim = securityService.verifyJwt(jwtToken);
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
+        }
+
+        String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
+
+        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(entry.getUsername())) {
+
+            try {
+                
+                Document entryDocument = new Document()
+                .append("name", entry.getName())
+                .append("startTime", entry.getStartTime())
+                .append("username", entry.getUsername());
+    
+                MongoDatabase database = mongoClient.getDatabase("timetracker");
+                MongoCollection<Document> collection = database.getCollection("entries");
+                collection.insertOne(entryDocument);
+                return Response.ok().entity("The entry has been created").build();
             } catch (MongoException e) {
                 return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
             }

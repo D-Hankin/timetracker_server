@@ -165,11 +165,7 @@ public class UserService {
                 
                 for (Document document : documents) {
 
-                    System.out.println(document.get("roleId"));
-                    Object roleIdValue = document.get("roleId");
-                    System.out.println("here: " + roleIdValue);
-
-                    if (document.get("roleId").equals("66335005aad6d2c4821c092b")) {
+                    if ("66335005aad6d2c4821c092b".equals(document.get("roleId"))) {
                         document.remove("password");
                         userList.add(document);
                     }
