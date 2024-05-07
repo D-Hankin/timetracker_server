@@ -87,15 +87,12 @@ public class UserService {
 
         MongoDatabase database = mongoClient.getDatabase("timetracker");
         MongoCollection<Document> collection = database.getCollection("roles");
-        System.out.println(user.getRoleId());
         Document query = new Document("_id", user.getRoleId());
         Document roleDocument = collection.find(query).first();
-        System.out.println(roleDocument);
         Set<String> permissions;
 
         
         if (roleDocument != null) {
-            System.out.println(roleDocument.getString("permissions"));
             String persmissionsString = roleDocument.getString("permissions");
             permissions = Set.of(persmissionsString.split(","));
         } else {
@@ -118,8 +115,6 @@ public class UserService {
         Document oldUserDoc = (Document) oldUser.getEntity();
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
-
-        System.out.println(editUserClaim.getPayload().get("groups").toString());
 
         if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(user.getUsername()) && editUserClaim.getPayload().get("groups").toString().contains("edit_user")) {
 

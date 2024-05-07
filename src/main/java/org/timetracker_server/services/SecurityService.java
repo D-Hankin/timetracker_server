@@ -98,7 +98,6 @@ public class SecurityService {
     private static PublicKey loadPublicKey() throws Exception {
 
         String keyContent = System.getenv("PUBLIC_KEY");
-        System.out.println(keyContent);
         keyContent = keyContent.replace("-----BEGIN PUBLIC KEY-----", "")
                                .replace("-----END PUBLIC KEY-----", "")
                                .replaceAll("\\s", "");
@@ -113,8 +112,6 @@ public class SecurityService {
 
         Set<String> userPermissions = userService.getUserPermissions(user);
         PrivateKey privateKey = loadPrivateKey();
-
-        System.out.println(userPermissions);
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
 
