@@ -6,6 +6,7 @@ import org.timetracker_server.services.UserService;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.PATCH;
@@ -45,6 +46,12 @@ public class UserResource {
     @Path("/edit-user")
     public Response editUser(@RequestBody User user, @HeaderParam("Authorization") String jwtToken) throws Exception {
         return userService.editUser(user, jwtToken);
+    }
+
+    @DELETE
+    @Path("/admin/remove-user")
+    public Response removeUser(@HeaderParam("username") String username, @HeaderParam("Authorization") String jwtToken) {
+        return userService.removeUser(username, jwtToken);
     }
 
 }

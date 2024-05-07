@@ -14,6 +14,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
 
 import config.AppConfig;
 
@@ -174,5 +175,36 @@ public class UserService {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorized to do this!").build();
         }
     }
-    
+
+    public Response removeUser(String username, String jwtToken) {
+
+        Jws<Claims> editUserClaim = null;
+        try {
+            editUserClaim = securityService.verifyJwt(jwtToken);
+        } catch (Exception e) {
+            return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
+        }
+
+        if (editUserClaim.getPayload().get("groups").toString().contains("delete_user")) {
+            
+            try {
+                MongoDatabase database = mongoClient.getDatabase("timetracker");
+                MongoCollection<Document> collection = database.getCollection("users");
+                Document query = new Document("username", username);
+                DeleteResult result = collection.deleteOne(query);
+
+                if(result.getDeletedCount() > 0) {
+                    return Response.ok().entity("Delete Successful.").build();
+                } else {
+                    return Response.status(Response.Status.NOT_FOUND).entity("User not found.").build();
+                }
+                
+
+            } catch (MongoException e) {
+                return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorized to do this!").build();
+        }
+    }
 }

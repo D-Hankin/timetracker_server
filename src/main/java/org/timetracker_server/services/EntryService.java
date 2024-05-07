@@ -65,6 +65,18 @@ public class EntryService {
             } catch (MongoException e) {
                 return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
             }
+        } else if (editUserClaim.getPayload().get("groups").toString().contains("get_users")) {
+            try {
+                MongoDatabase database = mongoClient.getDatabase("timetracker");
+                MongoCollection<Document> collection = database.getCollection("entries");
+                Document query = new Document("username", username);
+                List<Document> documents = new ArrayList<>();
+                collection.find(query).iterator().forEachRemaining(documents::add);
+        
+                return Response.ok(documents).build();
+            } catch (MongoException e) {
+                return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
+            }
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
         }
