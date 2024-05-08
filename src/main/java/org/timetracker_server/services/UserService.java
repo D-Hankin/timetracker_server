@@ -67,13 +67,9 @@ public class UserService {
     }
 
     private User mapDocumentToUser(Document userDoc) {
-        User user = new User();
-        user.setUserId(userDoc.getObjectId("_id").toString());
-        user.setUsername(userDoc.getString("username"));
-        user.setName(userDoc.getString("name"));
-        user.setEmail(userDoc.getString("email"));
-        user.setRoleId(userDoc.getObjectId("roleId").toString());
-        return user;
+        return new User(userDoc.getObjectId("_id").toString(), userDoc.getString("username"), userDoc.getString("name"), "hidden", 
+            userDoc.getString("email"), userDoc.getObjectId("roleId").toString());
+        
     }
 
     public Response createUser(User user) {
