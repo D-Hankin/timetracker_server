@@ -1,13 +1,11 @@
 package org.timetracker_server.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.timetracker_server.models.User;
@@ -17,9 +15,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Projections;
 import com.mongodb.client.result.DeleteResult;
 
 import config.AppConfig;
@@ -51,34 +46,35 @@ public class UserService {
     }
 
     public Response findUser(String username) {
-        try {
+
+        try{
             MongoDatabase database = mongoClient.getDatabase("timetracker");
             MongoCollection<Document> collection = database.getCollection("users");
-    
-            Bson projectStage = Aggregates.project(
-                Projections.fields(
-                    Projections.computed("_id", new Document("$toString", "$_id")),
-                    Projections.include("username", "name", "email"),
-                    Projections.computed("roleId", new Document("$toString", "$roleId"))
-                )
-            );
-    
-            Document result = collection.aggregate(Arrays.asList(
-                Aggregates.match(Filters.eq("username", username)),
-                projectStage
-            )).first();
-    
-            if (result != null) {
-                return Response.ok(result).build();
+            Document query = new Document("username", username);
+            Document userDoc = collection.find(query).first();
+
+            if (userDoc != null) {
+                User user = mapDocumentToUser(userDoc);
+                user.setPassword("hidden");
+                return Response.ok(user).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
             }
-        } catch (Exception e) {
+        } catch (MongoException e) {
             e.printStackTrace();
-            return Response.serverError().entity("An error occurred").build();
+            return Response.serverError().entity(e.getMessage()).build();
         }
     }
-    
+
+    private User mapDocumentToUser(Document userDoc) {
+        User user = new User();
+        user.setUserId(userDoc.getObjectId("_id").toString());
+        user.setUsername(userDoc.getString("username"));
+        user.setName(userDoc.getString("name"));
+        user.setEmail(userDoc.getString("email"));
+        user.setRoleId(userDoc.getObjectId("roleId").toString());
+        return user;
+    }
 
     public Response createUser(User user) {
         try {
