@@ -59,7 +59,6 @@ public class UserService {
             Projections.fields(
                 Projections.computed("_id", new Document("$toString", "$_id")),
                 Projections.include("username", "name", "email"),
-                Projections.exclude("password"),
                 Projections.computed("roleId", new Document("$toString", "$roleId"))
             )
         );
