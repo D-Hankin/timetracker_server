@@ -1,11 +1,13 @@
 package org.timetracker_server.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.timetracker_server.models.User;
@@ -15,6 +17,9 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.result.DeleteResult;
 
 import config.AppConfig;
@@ -49,9 +54,18 @@ public class UserService {
 
         MongoDatabase database = mongoClient.getDatabase("timetracker");
         MongoCollection<Document> collection = database.getCollection("users");
-        Document query = new Document("username", username);
 
-        return Response.ok(collection.find(query).first()).build();
+        Bson projectStage = Aggregates.project(
+        Projections.fields(
+            Projections.exclude("password"),
+            Projections.computed("_id", "$roleId.toString()"),
+            Projections.computed("roleId", "$roleId.toString()")
+        )
+        );
+
+        Document result = collection.aggregate(Arrays.asList(Aggregates.match(Filters.eq("username", username)), projectStage)).first();
+
+        return Response.ok(result).build();
     }
 
     public Response createUser(User user) {
