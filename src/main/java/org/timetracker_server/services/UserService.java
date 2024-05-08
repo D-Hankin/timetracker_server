@@ -52,8 +52,6 @@ public class UserService {
         Document query = new Document("username", username);
         Document userDoc = collection.find(query).first();
         userDoc.append("password", "hidden");
-        userDoc.append("userId", userDoc.get("userId").toString());
-        userDoc.append("userId", userDoc.get("roleId").toString());
 
         return Response.ok(userDoc).build();
     }
