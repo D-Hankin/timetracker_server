@@ -55,7 +55,7 @@ public class UserService {
         userDoc.append("userId", userDoc.get("userId").toString());
         userDoc.append("userId", userDoc.get("roleId").toString());
 
-        return Response.ok(collection.find(query).first()).build();
+        return Response.ok(userDoc).build();
     }
 
     public Response createUser(User user) {
