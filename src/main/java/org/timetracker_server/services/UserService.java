@@ -56,11 +56,12 @@ public class UserService {
         MongoCollection<Document> collection = database.getCollection("users");
 
         Bson projectStage = Aggregates.project(
-        Projections.fields(
-            Projections.exclude("password"),
-            Projections.computed("_id", "$roleId.toString()"),
-            Projections.computed("roleId", "$roleId.toString()")
-        )
+            Projections.fields(
+                Projections.computed("_id", new Document("$toString", "$_id")),
+                Projections.include("username", "name", "email"),
+                Projections.exclude("password"),
+                Projections.computed("roleId", new Document("$toString", "$roleId"))
+            )
         );
 
         Document result = collection.aggregate(Arrays.asList(Aggregates.match(Filters.eq("username", username)), projectStage)).first();
