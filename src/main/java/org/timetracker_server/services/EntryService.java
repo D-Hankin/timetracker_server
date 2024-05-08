@@ -1,13 +1,9 @@
 package org.timetracker_server.services;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.bson.Document;
-import org.bson.codecs.jsr310.LocalDateTimeCodec;
 import org.bson.types.ObjectId;
 import org.timetracker_server.models.Entry;
 
@@ -130,7 +126,9 @@ public class EntryService {
         query.append("name", name);
         query.append("username", username);
 
-        return collection.find(query).first().isEmpty() ? false : true;
+        Document result = collection.find(query).first();
+
+        return (result != null && !result.isEmpty());
     }
 
     public Response stopEntry(Entry entry, String stopTime, String jwtToken) {
