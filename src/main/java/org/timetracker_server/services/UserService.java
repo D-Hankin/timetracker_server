@@ -47,31 +47,15 @@ public class UserService {
 
     public Response findUser(String username) {
 
-        try{
-            MongoDatabase database = mongoClient.getDatabase("timetracker");
-            MongoCollection<Document> collection = database.getCollection("users");
-            Document query = new Document("username", username);
-            Document userDoc = collection.find(query).first();
+        MongoDatabase database = mongoClient.getDatabase("timetracker");
+        MongoCollection<Document> collection = database.getCollection("users");
+        Document query = new Document("username", username);
+        Document userDoc = collection.find(query).first();
+        userDoc.append("password", "hidden");
+        userDoc.append("userId", userDoc.get("userId").toString());
+        userDoc.append("userId", userDoc.get("roleId").toString());
 
-            if (userDoc != null) {
-                User user = mapDocumentToUser(userDoc);
-                user.setPassword("hidden");
-                return Response.ok(user).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
-            }
-        } catch (MongoException e) {
-            e.printStackTrace();
-            return Response.serverError().entity(e.getMessage()).build();
-        }
-    }
-
-    private User mapDocumentToUser(Document userDoc) {
-        System.out.println(userDoc.getObjectId("_id").toHexString());
-        System.out.println(userDoc.getObjectId("roleId").toHexString());
-        return new User(userDoc.getObjectId("_id").toHexString(), userDoc.getString("username"), userDoc.getString("name"), "hidden", 
-            userDoc.getString("email"), userDoc.getObjectId("roleId").toHexString());
-        
+        return Response.ok(collection.find(query).first()).build();
     }
 
     public Response createUser(User user) {
