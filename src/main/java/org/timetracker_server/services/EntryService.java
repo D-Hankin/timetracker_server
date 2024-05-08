@@ -131,7 +131,7 @@ public class EntryService {
         return result != null && !result.isEmpty();
     }
 
-    public Response stopEntry(Entry entry, int seconds, String jwtToken) {
+    public Response stopEntry(String username, String name, int seconds, String jwtToken) {
 
         Jws<Claims> editUserClaim = null;
         
@@ -143,15 +143,15 @@ public class EntryService {
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
 
-        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(entry.getUsername())) {
+        if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(username)) {
 
             try {
 
-                System.out.println(entry.getEntryId());
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
                 MongoCollection<Document> collection = database.getCollection("entries");
-                ObjectId queryId = new ObjectId(entry.getEntryId());
-                Document query = new Document("_id", queryId);
+                Document query = new Document();
+                query.append("username", username);
+                query.append("name", name);
                 Document setStopTime = new Document("$inc", new Document("minutes", seconds));
                 collection.updateOne(query, setStopTime);
                 System.out.println(collection.find(query).first());
