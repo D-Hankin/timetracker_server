@@ -67,6 +67,8 @@ public class UserService {
     }
 
     private User mapDocumentToUser(Document userDoc) {
+        System.out.println(userDoc.getObjectId("_id").toHexString());
+        System.out.println(userDoc.getObjectId("roleId").toHexString());
         return new User(userDoc.getObjectId("_id").toHexString(), userDoc.getString("username"), userDoc.getString("name"), "hidden", 
             userDoc.getString("email"), userDoc.getObjectId("roleId").toHexString());
         
