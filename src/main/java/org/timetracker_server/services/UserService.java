@@ -67,8 +67,8 @@ public class UserService {
     }
 
     private User mapDocumentToUser(Document userDoc) {
-        return new User(userDoc.getObjectId("_id").toString(), userDoc.getString("username"), userDoc.getString("name"), "hidden", 
-            userDoc.getString("email"), userDoc.getObjectId("roleId").toString());
+        return new User(userDoc.getObjectId("_id").toHexString(), userDoc.getString("username"), userDoc.getString("name"), "hidden", 
+            userDoc.getString("email"), userDoc.getObjectId("roleId").toHexString());
         
     }
 
