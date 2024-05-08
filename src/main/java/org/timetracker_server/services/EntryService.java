@@ -152,7 +152,7 @@ public class EntryService {
                 MongoCollection<Document> collection = database.getCollection("entries");
                 ObjectId queryId = new ObjectId(entry.getEntryId());
                 Document query = new Document("_id", queryId);
-                Document setStopTime = new Document("$set", new Document("minutes", seconds));
+                Document setStopTime = new Document("$inc", new Document("minutes", seconds));
                 collection.updateOne(query, setStopTime);
                 System.out.println(collection.find(query).first());
                 return Response.ok(collection.find(query).first()).entity("The time has been added!").build();
