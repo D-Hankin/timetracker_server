@@ -51,7 +51,6 @@ public class UserService {
         MongoCollection<Document> collection = database.getCollection("users");
         Document query = new Document("username", username);
         Document userDoc = collection.find(query).first();
-        userDoc.append("password", "hidden");
 
         return Response.ok(userDoc).build();
     }
