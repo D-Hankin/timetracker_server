@@ -41,14 +41,11 @@ public class SecurityService {
 
     public Response userLogin(final LoginDto loginDto) throws Exception {
         Response userResponse = userService.findUser(loginDto.getUsername());
-        Document userDoc = (Document) userResponse.getEntity();
-     
-        User user = new User(userDoc.get("_id").toString(), userDoc.get("username").toString(), userDoc.get("name").toString(), userDoc.get("password").toString(), 
-            userDoc.get("email").toString(), userDoc.get("roleId").toString());
+        User user = (User) userResponse.getEntity();
 
         String role;
 
-        if ("66335005aad6d2c4821c092b".equals(userDoc.get("roleId").toString())) {
+        if ("66335005aad6d2c4821c092b".equals(user.getUserId())) {
             role = "user";
         } else {
             role = "admin";
