@@ -51,22 +51,34 @@ public class UserService {
     }
 
     public Response findUser(String username) {
-
-        MongoDatabase database = mongoClient.getDatabase("timetracker");
-        MongoCollection<Document> collection = database.getCollection("users");
-
-        Bson projectStage = Aggregates.project(
-            Projections.fields(
-                Projections.computed("_id", new Document("$toString", "$_id")),
-                Projections.include("username", "name", "email"),
-                Projections.computed("roleId", new Document("$toString", "$roleId"))
-            )
-        );
-
-        Document result = collection.aggregate(Arrays.asList(Aggregates.match(Filters.eq("username", username)), projectStage)).first();
-
-        return Response.ok(result).build();
+        try {
+            MongoDatabase database = mongoClient.getDatabase("timetracker");
+            MongoCollection<Document> collection = database.getCollection("users");
+    
+            Bson projectStage = Aggregates.project(
+                Projections.fields(
+                    Projections.computed("_id", new Document("$toString", "$_id")),
+                    Projections.include("username", "name", "email"),
+                    Projections.computed("roleId", new Document("$toString", "$roleId"))
+                )
+            );
+    
+            Document result = collection.aggregate(Arrays.asList(
+                Aggregates.match(Filters.eq("username", username)),
+                projectStage
+            )).first();
+    
+            if (result != null) {
+                return Response.ok(result).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("An error occurred").build();
+        }
     }
+    
 
     public Response createUser(User user) {
         try {
