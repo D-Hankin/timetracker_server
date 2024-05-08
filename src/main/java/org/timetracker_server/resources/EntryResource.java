@@ -38,8 +38,8 @@ public class EntryResource {
 
     @PATCH
     @Path("/end-entry")
-    public Response stopEntry(@RequestBody Entry entry, @HeaderParam("timeToAdd") int minutes, @HeaderParam("Authorization") String jwtToken) {
-        return entryService.stopEntry(entry, minutes, jwtToken);
+    public Response stopEntry(@HeaderParam("username") String username, @HeaderParam("name") String name, @HeaderParam("timeToAdd") int minutes, @HeaderParam("Authorization") String jwtToken) {
+        return entryService.stopEntry(username, name, minutes, jwtToken);
     }
 
     @DELETE
