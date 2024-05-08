@@ -38,7 +38,7 @@ public class EntryResource {
 
     @PATCH
     @Path("/end-entry")
-    public Response stopEntry(@RequestBody Entry entry, @HeaderParam("minutes") String minutes, @HeaderParam("Authorization") String jwtToken) {
+    public Response stopEntry(@RequestBody Entry entry, @HeaderParam("timeToAdd") int minutes, @HeaderParam("Authorization") String jwtToken) {
         return entryService.stopEntry(entry, minutes, jwtToken);
     }
 

@@ -128,10 +128,10 @@ public class EntryService {
 
         Document result = collection.find(query).first();
 
-        return (result != null && !result.isEmpty());
+        return result != null && !result.isEmpty();
     }
 
-    public Response stopEntry(Entry entry, String stopTime, String jwtToken) {
+    public Response stopEntry(Entry entry, int seconds, String jwtToken) {
 
         Jws<Claims> editUserClaim = null;
         
@@ -152,10 +152,10 @@ public class EntryService {
                 MongoCollection<Document> collection = database.getCollection("entries");
                 ObjectId queryId = new ObjectId(entry.getEntryId());
                 Document query = new Document("_id", queryId);
-                Document setStopTime = new Document("$set", new Document("stopTime", stopTime));
+                Document setStopTime = new Document("$set", new Document("minutes", seconds));
                 collection.updateOne(query, setStopTime);
                 System.out.println(collection.find(query).first());
-                return Response.ok(collection.find(query).first()).entity("Entry timer has now stopped!").build();
+                return Response.ok(collection.find(query).first()).entity("The time has been added!").build();
                 
             } catch (MongoException e) {
                 return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
@@ -210,7 +210,19 @@ public class EntryService {
             return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
         }
 
+        String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
         Document oldEntry = findEntryById(entry.getEntryId());
+
+        if (editEntryClaim.getPayload().getIssuer().equals(issuer) && editEntryClaim.getPayload().get("upn").equals(oldEntry.get("username"))) {
+            
+            try {
+                
+            } catch (MongoException e) {
+                return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
+        }
 
         
         return null;
@@ -222,7 +234,7 @@ public class EntryService {
         MongoCollection<Document> collection = database.getCollection("entries");
         ObjectId queryId = new ObjectId(entryId);
         Document query = new Document("_id", queryId);
-        Document entry = collection.find(query).first();
-        return entry;
+
+        return collection.find(query).first();
     }
 }
