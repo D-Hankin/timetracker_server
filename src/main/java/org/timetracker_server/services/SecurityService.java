@@ -45,10 +45,18 @@ public class SecurityService {
      
         User user = new User(userDoc.get("_id").toString(), userDoc.get("username").toString(), userDoc.get("name").toString(), userDoc.get("password").toString(), 
             userDoc.get("email").toString(), userDoc.get("roleId").toString());
+
+        String role;
+
+        if ("66335005aad6d2c4821c092b".equals(userDoc.get("roleId").toString())) {
+            role = "user";
+        } else {
+            role = "admin";
+        }
     
         if (user != null && checkUserCredentials(user, loginDto.getPassword())) {
             String newToken = generateJwtToken(user);
-            return Response.ok().entity(new TokenResponse(newToken, "86400")).build();
+            return Response.ok().entity(new TokenResponse(newToken, "86400", role)).build();
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Unauthorised login attempt!").build();
         }
