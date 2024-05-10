@@ -1,7 +1,7 @@
-# Time Tracker Server
+# Time Tracker Server (under development)
 
 ## Overview
-The Time Tracker Server is a Java-based backend application developed as part of a school project in collaboration with Jönköping University. The server-side application serves as the backend for the Time Tracker client, handling data storage, authentication, and authorization.
+The Time Tracker Server is a Java-based backend application developed as part of a school project with Jönköping University. The server-side application serves as the backend for the Time Tracker client, handling data storage, authentication, and authorization. The client can be found [here]https://github.com/D-Hankin/timetrackerClient or live [here]https://sea-lion-app-6y5s4.ondigitalocean.app/
 
 ## Technologies Used
 - Java: Core programming language for backend development.
