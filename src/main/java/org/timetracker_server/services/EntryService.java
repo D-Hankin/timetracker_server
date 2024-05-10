@@ -48,7 +48,7 @@ public class EntryService {
         }
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
-
+        System.out.println("admin incoming: " + editUserClaim.getPayload().get("groups").toString());
         if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(username)) {
             
             try {
@@ -62,7 +62,7 @@ public class EntryService {
             } catch (MongoException e) {
                 return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
             }
-        } else if (editUserClaim.getPayload().get("groups").toString().contains("get_users")) {
+        } else if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("groups").toString().contains("get_users")) {
             try {
                 MongoDatabase database = mongoClient.getDatabase("timetracker");
                 MongoCollection<Document> collection = database.getCollection("entries");
