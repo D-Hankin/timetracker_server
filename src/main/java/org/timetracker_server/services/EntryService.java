@@ -48,8 +48,7 @@ public class EntryService {
         }
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
-        System.out.println("admin incoming: " + editUserClaim.getPayload().get("groups").toString());
-        
+
         if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(username)) {
             
             try {
@@ -155,7 +154,6 @@ public class EntryService {
                 query.append("name", name);
                 Document setStopTime = new Document("$inc", new Document("minutes", seconds));
                 collection.updateOne(query, setStopTime);
-                System.out.println(collection.find(query).first());
                 return Response.ok(collection.find(query).first()).entity("The time has been added!").build();
                 
             } catch (MongoException e) {
