@@ -47,11 +47,5 @@ public class EntryResource {
     public Response deleteEntry(@HeaderParam("entryId") String entryId, @HeaderParam("Authorization") String jwtToken) {
         return entryService.deleteEntry(entryId, jwtToken);
     }
-
-    @PATCH
-    @Path("/edit-entry")
-    public Response editEntry(@RequestBody Entry entry, @HeaderParam("Authorization") String jwtToken) {
-        return entryService.editEntry(entry, jwtToken);
-    }
     
 }

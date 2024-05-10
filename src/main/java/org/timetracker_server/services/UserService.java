@@ -69,7 +69,7 @@ public class UserService {
             .append("name", user.getName())
             .append("password", hashedPassword)
             .append("email", user.getEmail())
-            .append("roleId", roleDocument.getObjectId("_id"));
+            .append("roleId", roleDocument.getObjectId("_id").toString());
 
             MongoCollection<Document> userCollection = database.getCollection("users");
             userCollection.insertOne(userDocument);
