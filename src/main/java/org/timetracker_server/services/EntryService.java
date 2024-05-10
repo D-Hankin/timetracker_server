@@ -49,6 +49,7 @@ public class EntryService {
 
         String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
         System.out.println("admin incoming: " + editUserClaim.getPayload().get("groups").toString());
+        
         if (editUserClaim.getPayload().getIssuer().equals(issuer) && editUserClaim.getPayload().get("upn").equals(username)) {
             
             try {
@@ -199,33 +200,6 @@ public class EntryService {
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
         }
-    }
-
-    public Response editEntry(Entry entry, String jwtToken) {
-        
-        Jws<Claims> editEntryClaim = null;
-        try {
-            editEntryClaim = securityService.verifyJwt(jwtToken);
-        } catch (Exception e) {
-            return Response.status(Response.Status.FORBIDDEN.getStatusCode()).entity(e.getMessage()).build();
-        }
-
-        String issuer = config.jwtIssuer() != null ? config.jwtIssuer() : System.getenv("JWT_ISSUER");
-        Document oldEntry = findEntryById(entry.getEntryId());
-
-        if (editEntryClaim.getPayload().getIssuer().equals(issuer) && editEntryClaim.getPayload().get("upn").equals(oldEntry.get("username"))) {
-            
-            try {
-                
-            } catch (MongoException e) {
-                return Response.status(Response.Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("You are not authorised to do this!").build();
-        }
-
-        
-        return null;
     }
 
     private Document findEntryById(String entryId) {
