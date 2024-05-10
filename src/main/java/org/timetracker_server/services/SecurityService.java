@@ -85,22 +85,6 @@ public class SecurityService {
                 System.out.println(e.getMessage());
                 return null;
             }
-
-        // } else {
-        //     byte[] keyBytes = Files.readAllBytes(Paths.get("src/main/resources/privateKey.pem"));
-        //     String keyContent = new String(keyBytes, StandardCharsets.UTF_8);
-        //     System.out.println(keyContent);
-        //     keyContent = keyContent.replace("-----BEGIN PRIVATE KEY-----", "")
-        //                            .replace("-----END PRIVATE KEY-----", "")
-        //                            .replaceAll("\\s", "");
-        //     byte[] decodedKeyBytes = Base64.getDecoder().decode(keyContent);
-        
-        //     PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decodedKeyBytes);
-        //     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
-        //     return keyFactory.generatePrivate(spec);
-        // }
-
     }
     
     private static PublicKey loadPublicKey() throws Exception {
